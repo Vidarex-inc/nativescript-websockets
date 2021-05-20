@@ -128,30 +128,8 @@ var _WebSocket = org.java_websocket.client.WebSocketClient.extend('technology.ma
         }
 
         if (this.wrapper && binaryMessage) {
-
-        	// Is a Native JAVA Buffer type
-			if (typeof binaryMessage.rewind === 'function') {
-
-				// Make sure binaryMessage is at beginning of buffer
-				//noinspection JSUnresolvedFunction
-				binaryMessage.rewind();
-
-				// Convert Binary Message into ArrayBuffer/Uint8Array
-				//noinspection JSUnresolvedFunction
-				var count = binaryMessage.limit();
-				var view = new Uint8Array(count);
-				for (var i = 0; i < count; i++) {
-					view[i] = binaryMessage.get(i);
-				}
-				binaryMessage = null;
-				this.wrapper._notify("message", [this.wrapper, view.buffer]);
-			} else {
-				// If this is already an a ArrayBuffer
-
-				//console.log("TO:", Object.prototype.toString.call(binaryMessage));
-
-				this.wrapper._notify("message", [this.wrapper, binaryMessage]);
-			}
+            // Send over the native object
+        	this.wrapper._notify("message", [this.wrapper, binaryMessage]);
 		}
     },
     onPong: function(){
