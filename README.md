@@ -1,32 +1,40 @@
-[![npm](https://img.shields.io/npm/v/nativescript-websockets.svg)](https://www.npmjs.com/package/nativescript-websockets)
-[![npm](https://img.shields.io/npm/l/nativescript-websockets.svg)](https://www.npmjs.com/package/nativescript-workers)
-[![npm](https://img.shields.io/npm/dt/nativescript-websockets.svg?label=npm%20d%2fls)](https://www.npmjs.com/package/nativescript-websockets)
+[![npm](https://img.shields.io/npm/v/@master.technology/websockets.svg)](https://www.npmjs.com/package/@master.technology/websockets)
+[![npm](https://img.shields.io/npm/l/@master.technology/websockets.svg)](https://www.npmjs.com/package/@master.technology/websockets)
+[![npm](https://img.shields.io/npm/dt/@master.technology/websockets.svg?label=npm%20d%2fls)](https://www.npmjs.com/package/@master.technology/websockets)
+
 
 # NativeScript WebSockets
 
-This is a cross platform WebSocket library for IOS and Android.   
+This is a cross-platform WebSocket library for IOS and Android.
+It supports:
+  - Android using Java-Websockets
+  - iOS v12 and less using a modified PocketSocket library.
+  - iOS V13 and higher using Apple's websocket api (Thanks to legion151 for a lot of the work)
 
+Please note, According to some stats (https://www.david-smith.org/iosversionstats/ as of mid-2021) iOS < 13 support is still about 7% of the iOS market.
 
 
 ## License
-My code is (c)2015-2019, Master Technology.  All my code is LICENSED under the MIT License. The Android Library is also MIT, the iOS libraries used Apache 2.0; which you may view them by reading the "LICENSE" file.
+My code is (c)2015-2021, Master Technology.  All my code is LICENSED under the MIT License. The Android Library is also MIT, the iOS libraries used Apache 2.0; which you may view them by reading the "LICENSE" file.
 
-I also do contract work; so if you have a module you want built for NativeScript (or any other software projects) feel free to contact me [nathan@master-technology.com](mailto://nathan@master-technology.com).
+I also do contract work; so if you have a module you want built for NativeScript (or any other software projects) feel free to contact me [nathan@master.technology](mailto://nathan@master.technology).
 
 If you want professional and support plugins; checkout the all new [https://proplugins.org](https://proplugins.org)
-
-
 
 ## Installation
 
 First run `tns --version`
 
-### v1.4 or later
+### v1.4 thru NS 5.0
 
 Run `tns plugin add nativescript-websockets` in your ROOT directory of your project.
 
+
+### V6.0 or later (Last Tested on NS 8)
+Run `ns plugin add @master.technology/websockets` in your ROOT directory of your project.
+
 ## Limitations
-* The sending of Protocols support is not fully implemented on both platforms.  Do not depend on this; it only partially works..
+* The sending of Protocols support is not fully implemented on both platforms.  Do not depend on this; it only partially works.
 
 ## Angular
 Pay attention and don't forget to use `NgZone.run()` -- if you don't use it in some cases; your UI may not update when you get data updates.  This is NOT a limitation of this library; but just how Angular works for its change detection system.
@@ -37,7 +45,7 @@ There is two possible interfaces for you to use; the Simple WebSocket interface 
 
 ### Browser based Interface
 ```js
-require('nativescript-websockets');
+require('@master.technology/websockets');
 
 var mySocket = new WebSocket("ws://echo.websocket.org", [ /* "protocol","another protocol" */]);
 mySocket.addEventListener('open', function (evt) { console.log("We are Open"); evt.target.send("Hello"); });
@@ -49,7 +57,7 @@ mySocket.addEventListener('error', function(evt) { console.log("The socket had a
 
 ### Advanced Interface
 ```js
-var WS = require('nativescript-websockets');
+var WS = require('@master.technology/websockets');
 
 var mySocket = new WS("ws://echo.websocket.org",{protocols: [/* 'chat', 'video' */], timeout: 6000, allowCellular: true, headers: { 'Authorization': 'Basic ...' }});
 mySocket.on('open', function(socket) { console.log("Hey I'm open"); socket.send("Hello"); });
@@ -57,6 +65,8 @@ mySocket.on('message', function(socket, message) { console.log("Got a message", 
 mySocket.on('close', function(socket, code, reason) { console.log("Socket was closed because: ", reason, " code: ", code); });
 mySocket.on('error', function(socket, error) { console.log("Socket had an error", error);});
 
+// When all done with the socket, if you want to clear its memory do
+mySocket.unref();
 ```
 
 ### Browser Based WebSockets
@@ -70,7 +80,7 @@ The browser based WebSockets are virtually identical to what you would get if yo
 * Protocols - OPTIONAL (Array of String) - valid list protocols.  Please see limitations note.   
 
 #### Attaches an event to the WebSocket
-****#### .attachEventListener(EventName, function)
+#### .attachEventListener(EventName, function)
 #### .on(EventName, function)
 ##### Parameters
 * EventName - (String) can be "open", "close", "message" and "error"
@@ -86,10 +96,11 @@ The Advanced WebSockets allow you a lot more control over setting up and creatin
 ##### Parameters
 * URL - Url to Open
 * Options
-** protocols - (Array of string) - Valid protocols.  (See Limitation note)
-** timeout - timeout  (Defaults to 60,0000ms on IOS amd 10,000ms on Android, setting this to 0 disables timeouts)
-** allowCellular (ios only, defaults to True) - can disable the WebSocket from going over the cellular network
-** sslSocketFactory (android only, defaults to null) - you can pass in your ssl socket factory you want to use.
+  * protocols - (Array of string) - Valid protocols.  (See Limitation note)
+  * timeout - timeout  (Defaults to 60,0000ms on IOS amd 10,000ms on Android, setting this to 0 disables timeouts)
+  * allowCellular (ios only, defaults to True) - can disable the WebSocket from going over the cellular network
+  * sslSocketFactory (android only, defaults to null) - you can pass in your ssl socket factory you want to use.
+  * connectionLostTimeout (android only, defaults to 60s) - Detect lost connection using ping/pong, forcing a socket disconnect. See [Lost connection detection](https://github.com/TooTallNate/Java-WebSocket/wiki/Lost-connection-detection) for more information.
 
 #### Attaches an event to the WebSocket
 #### .attachEventListener(EventName, function, passedThis)
@@ -104,9 +115,12 @@ The Advanced WebSockets allow you a lot more control over setting up and creatin
 ##### Notes: in the Advanced WebSocket you can re-open a closed WebSocket...
 
 
-
-
 ### Common Functions between Advanced and Browser WebSockets
+
+#### Clears the memory used by the websocket
+#### .unref()
+Do to the way GC works, we have to keep a hard reference so that your websocket doesn't disappear mid-use. We automatically call this function on close of browser based websockets.  On advanced sockets because you can reopen them again, you are responsible to call this when you are totally done with the socket.
+
 
 #### Closes the open Socket
 #### .close(code, reason)
@@ -126,6 +140,7 @@ The Advanced WebSockets allow you a lot more control over setting up and creatin
 * 1 - Open
 * 2 - Closing
 * 3 - Closed
+
 
 #### The URL you opened
 #### .url
@@ -163,9 +178,3 @@ The Advanced WebSockets allow you a lot more control over setting up and creatin
 #### .isClosing()
 ##### Returns true if it is in the process of closing...
 
-
-## Tutorials
-
-Need a little bit more help getting up and running with NativeScript Websockets?  Check out these tutorials for NativeScript on the subject.
-
-* [Communicate with Websockets in a NativeScript Angular Application](https://www.thepolyglotdeveloper.com/2017/01/communicate-with-websockets-in-a-nativescript-angular-application/)

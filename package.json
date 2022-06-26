@@ -1,17 +1,17 @@
 {
   "name": "@vidarex/nativescript-websockets",
-  "version": "1.5.5",
+  "version": "2.0.4",
   "description": "A WebSocket NativeScript module for Android and iOS",
   "main": "websockets",
   "nativescript": {
     "platforms": {
-      "android": "1.5.0",
-      "ios": "1.5.0"
+      "android": "6.0.0",
+      "ios": "6.0.0"
     }
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Vidarex-inc/nativescript-websockets.git"
+    "url": "https://github.com/nathanaela/nativescript-websockets.git"
   },
   "keywords": [
     "NativeScript",
@@ -52,5 +52,16 @@
     "url": "https://github.com/nathanaela/nativescript-sqlite/blob/master/LICENSE"
   },
   "homepage": "https://github.com/nathanaela/nativescript-websockets",
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+  "funding": [
+    {
+      "type" : "individual",
+      "url" : "https://paypal.me/mastertechnology"
+    },
+    {
+      "type" : "patreon",
+      "url" : "https://www.patreon.com/NathanaelA"
+    }
+  ],
+  "publishConfig": { "access": "public" }
 }
